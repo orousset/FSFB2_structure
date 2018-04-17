@@ -18,6 +18,7 @@ namespace FSFB2_structure
         public const int INVALID_INDEX = -1;
         public const int NO_ERROR = 0;
     }
+    
     public class FSFB2DataFlow
     /// <summary>
     /// This class contains all the useful info for an FSFB2 Data Flow
@@ -37,6 +38,24 @@ namespace FSFB2_structure
             mappingTX = new Dictionary<string, int>(); // TX mapping (from SC perspective)
         }
 
+        public string[] getBitMapping(string RXTX) {
+            string[] returnBitmapping;
+            if (RXTX == "RX") {
+                returnBitmapping = new string[mappingRX.Count];
+                foreach (KeyValuePair<string, int> entry in mappingRX) {
+                    returnBitmapping[entry.Value] = entry.Key;
+                }
+            }
+            else if (RXTX == "TX") {
+                returnBitmapping = new string[mappingTX.Count];
+                foreach (KeyValuePair<string, int> entry in mappingTX) {
+                    returnBitmapping[entry.Value] = entry.Key;
+                }
+            }
+            else returnBitmapping = null;
+            return returnBitmapping;
+        }
+
         public int SetNameIndex(string name, int index, string RXTX) {
             if (index < 0) return ERRORS.INVALID_INDEX;
             if (RXTX == "RX") { try { mappingRX.Add(name, index); } catch (ArgumentException ex) { return ERRORS.INVALID_NAME; } }
@@ -45,10 +64,31 @@ namespace FSFB2_structure
             return ERRORS.NO_ERROR;
         }
 
-        public int GetIndex(string name, string RXTX) {
-            if (RXTX == "RX") { try { return mappingRX[name]; } catch (Exception ex) { return ERRORS.INVALID_NAME; } }
-            else if (RXTX == "TX") { try { return mappingTX[name]; } catch (Exception ex) { return ERRORS.INVALID_NAME; } }
-            else return ERRORS.INVALID_RXTX;
+        public int[] GetIndex(string[] name, string RXTX) {
+            int[] returnValue = new int[name.Length];
+            if (name.Length == 0) { return new int[] { ERRORS.INVALID_NAME }; }
+            else
+            {
+                if (RXTX == "RX")
+                {
+                    try
+                    {
+                        for (int cpt = 0; cpt < name.Length; cpt++) { returnValue[cpt] = mappingRX[name[cpt]]; }
+                        return returnValue;
+                    }
+                    catch (Exception ex) { return (new int[] { ERRORS.INVALID_NAME }); }
+                }
+                else if (RXTX == "TX")
+                {
+                    try
+                    {
+                        for (int cpt = 0; cpt < name.Length; cpt++) { returnValue[cpt] = mappingTX[name[cpt]];  }
+                        return returnValue;
+                    }
+                    catch (Exception ex) { return (new int[] { ERRORS.INVALID_NAME }); }
+                }
+                else { return (new int[] { ERRORS.INVALID_RXTX }); }
+            }
         }
 
         public int InitFSFB2DataFlow(string nameNode, FSFB2Node myNode) {
