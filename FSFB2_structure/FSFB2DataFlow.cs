@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 
 namespace FSFB2_structure
@@ -54,6 +51,17 @@ namespace FSFB2_structure
             }
             else returnBitmapping = null;
             return returnBitmapping;
+        }
+
+        public int GetLength(string RXTX) {
+            switch (RXTX) {
+                case "RX":
+                return mappingRX.Count;
+                case "TX":
+                return mappingTX.Count;
+                default:
+                return -1;
+            }
         }
 
         public int SetNameIndex(string name, int index, string RXTX) {
